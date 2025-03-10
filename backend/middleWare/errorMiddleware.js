@@ -1,12 +1,12 @@
-const errorHandler =(err, req, res, next) => {
-    const statusCode = res.statusCode ? res.
-    statusCode: 500
-    res.status(statusCode)
+const errorHandler = (err, req, res, next) => {
+    const statusCode = res.statusCode ? res.statusCode : 500; // ✅ Fixed syntax error
+
+    res.status(statusCode);
 
     res.json({
         message: err.message,
-        stack: ProcessingInstruction.env.NODE_ENV === "development" ? err.stack : null
-    })
+        stack: process.env.NODE_ENV === "development" ? err.stack : null // ✅ Fixed `ProcessingInstruction`
+    });
 };
 
 module.exports = errorHandler;

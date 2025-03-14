@@ -148,7 +148,7 @@ const loginStatus = asyncHandler (async (req , res ) => {
 
 // Update User
 const updateUser = asyncHandler(async (req, res) => {
-    const user = await User.findById(req.user._id)
+    const user = await User.findById(req.user._id);
 
     if (user) {
         const {_id, name, email, photo, phone, bio} = user;
@@ -174,6 +174,37 @@ const updateUser = asyncHandler(async (req, res) => {
     }
 });
 
+// Change Password
+
+const changePassword = asyncHandler(async (req,res) => {
+    const user = await User.findById(req.user._id)
+
+    const {oldPassword, password} = req.body
+    if(!user){
+        res.status(400);
+        throw new Error("User not found, please signup");
+        
+    }
+    //validate
+    if(!oldPassword || !password){
+        res.status(400);
+        throw new Error("Please add old and new password");
+        
+    }
+
+    //check if old password matches password in DB
+    const passwordIscorrect = await bcrypt.compare(oldPassword, user.password);
+    // Save new Password 
+    if(user && passwordIscorrect){
+        user.password = password;
+        await user.save();
+        res.status(200).send("Password Change Sucessfull")
+    } else{
+        res.status(400);
+        throw new Error("Old Password is Incorrect");
+    }
+});
+
 
 module.exports ={
     registerUser,
@@ -182,4 +213,5 @@ module.exports ={
     getUser,
     loginStatus,
     updateUser,
+    changePassword,
 };
